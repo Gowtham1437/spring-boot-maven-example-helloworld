@@ -24,9 +24,8 @@ pipeline{
                         sh 'docker login -u bobby4me -p ${token}'
 }
                 }
-                sh 'docker login -u bobby4me -p dckr_pat_k7bMm6utohbyx2UjjIHojjfqtl8'
-                sh 'docker build . -t obby4me/devops:v1'
-                sh 'docker push obby4me/devops:v1'
+                sh 'docker build . -t bobby4me/devops:v1'
+                sh 'docker push bobby4me/devops:v1'
             }
        
         }
