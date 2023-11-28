@@ -36,12 +36,12 @@ pipeline{
         }   
     stage ('k8s cicd') {
         steps{
+            dir('menifests')
             script {
                 withCredentials([string(credentialsId: 'k8s_token', variable: 'k8s_token')]) {
 }
             }
-            dir('menifests')
-            sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token} apply -f deployment.yml'
+                 sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token} apply -f deployment.yml'
 
                     sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token}" apply -f service.yml'
                     
