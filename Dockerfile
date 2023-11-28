@@ -1,7 +1,12 @@
-FROM ubuntu
-#MAINTAINER Pythonlife
-RUN apt update
-RUN apt install -y openjdk-11-jre-headless
-COPY target/SpringBootMavenExample-1.3.5.RELEASE.war /opt/app.jar
-WORKDIR /opt
-CMD ["java", "-jar","app.jar"]
+FROM tomcat
+
+MAINTAINER bobby
+
+RUN apt-get update && apt-get -y upgrade
+
+WORKDIR /usr/local/tomcat
+
+COPY tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
+COPY context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
+
+EXPOSE 8080
