@@ -36,7 +36,7 @@ pipeline{
         }   
     stage ('k8s cicd') {
         steps{
-            dir('menifests')
+            dir('menifests') {
                  sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "eyJhbGciOiJSUzI1NiIsImtpZCI6InlocFpKRl9heTY3T29QQ2F2aWRnUkttY1VoOEM5ZkxCMlJzMFVXUDdIbXMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjVmYmUyZWQ0LWY0NTMtNDM0My1iNjE0LWJkNWUzNjkzNTNiNSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmplbmtpbnMifQ.sDQ_Fw8KjHmD0BC8eeAoj5HMO_mN9RygyLMNG_vBX1inZYOPlMrgZ6q9EKzXN2pdmBaw78o8ZuiFZammyvldi3A2XSNxCdsrbRj8liNbj9OCZxgsFoQ1QCXtYve0FKIH9u98Ig-H8r23OjBpsI3KwLHdFUhjVGpD0JT3elbUYVEXJ3h9HUgjwW1VkGjVyshPctGliOM7lpKzkwLqka0ZvdoP4-fV5ZEGl5-0RZtps3NlXcUUP3KDrBg1pZKtSPTfzD4b6H4oxYY6BY3gEejRTjLJpCWSOaS_RHd1pgYGT0yXFtId-LwEXScBmitmuLWMcGdquowa0JwUVWT4LLCKg" apply -f deployment.yml'
 
                     sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "eyJhbGciOiJSUzI1NiIsImtpZCI6InlocFpKRl9heTY3T29QQ2F2aWRnUkttY1VoOEM5ZkxCMlJzMFVXUDdIbXMifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjVmYmUyZWQ0LWY0NTMtNDM0My1iNjE0LWJkNWUzNjkzNTNiNSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmplbmtpbnMifQ.sDQ_Fw8KjHmD0BC8eeAoj5HMO_mN9RygyLMNG_vBX1inZYOPlMrgZ6q9EKzXN2pdmBaw78o8ZuiFZammyvldi3A2XSNxCdsrbRj8liNbj9OCZxgsFoQ1QCXtYve0FKIH9u98Ig-H8r23OjBpsI3KwLHdFUhjVGpD0JT3elbUYVEXJ3h9HUgjwW1VkGjVyshPctGliOM7lpKzkwLqka0ZvdoP4-fV5ZEGl5-0RZtps3NlXcUUP3KDrBg1pZKtSPTfzD4b6H4oxYY6BY3gEejRTjLJpCWSOaS_RHd1pgYGT0yXFtId-LwEXScBmitmuLWMcGdquowa0JwUVWT4LLCKg" apply -f service.yml'
@@ -50,4 +50,5 @@ pipeline{
             }
        }
     }
+ }
 }
