@@ -1,44 +1,27 @@
-FROM tomcat:8.5-jdk11
+# Docker file for Ubuntu with OpenJDK 18 and Tomcat 9.
+FROM ubuntu:latest
+LABEL maintainer="Karl Hill <karl.hill@nasa.gov>"
 
-MAINTAINER Unidata
+# Set environment variables
+ENV TOMCAT_VERSION 9.0.71
+ENV CATALINA_HOME /usr/local/tomcat
+ENV JAVA_HOME /usr/lib/jvm/java-18-openjdk-amd64
+ENV PATH $CATALINA_HOME/bin:$PATH
 
-# Install necessary packages
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends  \
-        gosu \
-        zip \
-        unzip \
-        && \
-    # Cleanup
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    # Eliminate default web applications
-    rm -rf ${CATALINA_HOME}/webapps/* && \
-    rm -rf ${CATALINA_HOME}/webapps.dist && \
-    # Obscuring server info
-    cd ${CATALINA_HOME}/lib && \
-    mkdir -p org/apache/catalina/util/ && \
-    unzip -j catalina.jar org/apache/catalina/util/ServerInfo.properties \
-        -d org/apache/catalina/util/ && \
-    sed -i 's/server.info=.*/server.info=Apache Tomcat/g' \
-        org/apache/catalina/util/ServerInfo.properties && \
-    zip -ur catalina.jar \
-        org/apache/catalina/util/ServerInfo.properties && \
-    rm -rf org && cd ${CATALINA_HOME} && \
-    # Setting restrictive umask container-wide
-    echo "session optional pam_umask.so" >> /etc/pam.d/common-session && \
-    sed -i 's/UMASK.*022/UMASK           007/g' /etc/login.defs
+# Install JDK & wget packages.
+RUN apt-get -y update && apt-get -y upgrade
+RUN apt-get -y install openjdk-18-jdk wget
 
-# Security enhanced web.xml
-COPY web.xml ${CATALINA_HOME}/conf/
+# Install and configure Tomcat.
+RUN mkdir $CATALINA_HOME
+RUN wget https://archive.apache.org/dist/tomcat/tomcat-9/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz -O /tmp/tomcat.tar.gz
+RUN cd /tmp && tar xvfz tomcat.tar.gz
+RUN cp -Rv /tmp/apache-tomcat-${TOMCAT_VERSION}/* $CATALINA_HOME
+RUN rm -rf /tmp/apache-tomcat-${TOMCAT_VERSION}
+RUN rm -rf /tmp/tomcat.tar.gz
 
-# Security enhanced server.xml
-COPY server.xml ${CATALINA_HOME}/conf/
+# Expose Tomcat port.
+EXPOSE 80
 
-# Tomcat start script
-COPY start-tomcat.sh ${CATALINA_HOME}/bin
-COPY entrypoint.sh /
-
-# Start container
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["start-tomcat.sh"]
+# Start Tomcat
+CMD ["/usr/local/tomcat/bin/catalina.sh", "run"]
