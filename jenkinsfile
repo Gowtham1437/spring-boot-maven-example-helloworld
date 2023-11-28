@@ -20,14 +20,14 @@ pipeline{
         stage ('docker build'){
             steps{
                 sh 'docker login -u bobby4me -p dckr_pat_k7bMm6utohbyx2UjjIHojjfqtl8'
-                sh 'docker build . -t bobby4me/mynginx:v1'
-                sh 'docker push bobby4me/mynginx:v1'
+                sh 'docker build . -t obby4me/devops:v1'
+                sh 'docker push obby4me/devops:v1'
             }
        
         }
     stage ('menifest checkout') {
             steps{
-                git 'https://github.com/Gowtham1437/aws-k8s-cicd.git'
+                git changelog: false, poll: false, url: 'https://github.com/Gowtham1437/spring-boot-maven-example-helloworld.git'
             }
         }   
     stage ('k8s cicd') {
