@@ -24,7 +24,7 @@ pipeline{
                         sh 'docker login -u bobby4me -p ${token}'
 }
                 }
-                sh 'docker build . -t bobby4me/devops:v1'
+                sh 'docker build . -t bobby4me/devops:v5'
                 sh 'docker push bobby4me/devops:v5'
             }
        
