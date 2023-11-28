@@ -17,8 +17,13 @@ pipeline{
             }
         } 
 
-        stage ('docker build'){
+        stage ('docker build & push'){
             steps{
+                script {
+                    withCredentials([string(credentialsId: 'token', variable: 'token')]) {
+                        sh 'docker login -u bobby4me -p ${token}'
+}
+                }
                 sh 'docker login -u bobby4me -p dckr_pat_k7bMm6utohbyx2UjjIHojjfqtl8'
                 sh 'docker build . -t obby4me/devops:v1'
                 sh 'docker push obby4me/devops:v1'
@@ -32,12 +37,16 @@ pipeline{
         }   
     stage ('k8s cicd') {
         steps{
+            script {
+                withCredentials([string(credentialsId: 'k8s_token', variable: 'k8s_token')]) {
+}
+            }
             dir('menifests')
-            sh 'kubectl --server=https://60D68DAE74E9C2E234A797B7CD3EE8AC.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token="eyJhbGciOiJSUzI1NiIsImtpZCI6Im0tTUl6blRmWElxYUs0U09UMnJZWmh2bHJESGpTZWtzQmFKazlqUnNRM2MifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjlmODMzMTdiLWMyMzctNDBhZS05YTRiLTkxNWM0ZTZkYWJmNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmplbmtpbnMifQ.mE4DGdfGCnTKxXfhkN2UFkSnV8MyVJt0YhkIp68-WS4ydPWTo2M_Z67lPZ9ivHXz7sXhAlNOX8nLdMJnBZTPmgyr73ZastyCgMBMig8vRWXGbk-IM5XCR3rzJYU9iL0WjwWdSwtKYV0isPCHRtXRpxqwI6THkn__4OsYcNJI6WcoUB31_ctwm3KK2Q3J3QSTqYwk_02kIbGrr_sPo1kSF830PhusNzvBFeNQPcugf0lkX-ARPLWGD1tQDINeHZFo-LLeQCvg0VE0IEsGBoD7Q3d11mAUvpAzd_Vq-KW5dupKbjy_vexNpDt9hsXDJTnz0DHQOEOnkSCiAo5IAUnCow" apply -f deployment.yml'
+            sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token} apply -f deployment.yml'
 
-                    sh 'kubectl --server=https://60D68DAE74E9C2E234A797B7CD3EE8AC.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token="eyJhbGciOiJSUzI1NiIsImtpZCI6Im0tTUl6blRmWElxYUs0U09UMnJZWmh2bHJESGpTZWtzQmFKazlqUnNRM2MifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjlmODMzMTdiLWMyMzctNDBhZS05YTRiLTkxNWM0ZTZkYWJmNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmplbmtpbnMifQ.mE4DGdfGCnTKxXfhkN2UFkSnV8MyVJt0YhkIp68-WS4ydPWTo2M_Z67lPZ9ivHXz7sXhAlNOX8nLdMJnBZTPmgyr73ZastyCgMBMig8vRWXGbk-IM5XCR3rzJYU9iL0WjwWdSwtKYV0isPCHRtXRpxqwI6THkn__4OsYcNJI6WcoUB31_ctwm3KK2Q3J3QSTqYwk_02kIbGrr_sPo1kSF830PhusNzvBFeNQPcugf0lkX-ARPLWGD1tQDINeHZFo-LLeQCvg0VE0IEsGBoD7Q3d11mAUvpAzd_Vq-KW5dupKbjy_vexNpDt9hsXDJTnz0DHQOEOnkSCiAo5IAUnCow" apply -f service.yml'
+                    sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token}" apply -f service.yml'
                     
-                    sh 'kubectl --server=https://60D68DAE74E9C2E234A797B7CD3EE8AC.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token="eyJhbGciOiJSUzI1NiIsImtpZCI6Im0tTUl6blRmWElxYUs0U09UMnJZWmh2bHJESGpTZWtzQmFKazlqUnNRM2MifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImplbmtpbnMtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiamVua2lucyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjlmODMzMTdiLWMyMzctNDBhZS05YTRiLTkxNWM0ZTZkYWJmNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmplbmtpbnMifQ.mE4DGdfGCnTKxXfhkN2UFkSnV8MyVJt0YhkIp68-WS4ydPWTo2M_Z67lPZ9ivHXz7sXhAlNOX8nLdMJnBZTPmgyr73ZastyCgMBMig8vRWXGbk-IM5XCR3rzJYU9iL0WjwWdSwtKYV0isPCHRtXRpxqwI6THkn__4OsYcNJI6WcoUB31_ctwm3KK2Q3J3QSTqYwk_02kIbGrr_sPo1kSF830PhusNzvBFeNQPcugf0lkX-ARPLWGD1tQDINeHZFo-LLeQCvg0VE0IEsGBoD7Q3d11mAUvpAzd_Vq-KW5dupKbjy_vexNpDt9hsXDJTnz0DHQOEOnkSCiAo5IAUnCow" rollout restart deployment/java-app-deployment'
+                    sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token}" rollout restart deployment/java-app-deployment'
                     
                     echo "kubernetes deployment is done"
 
