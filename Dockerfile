@@ -1,19 +1,44 @@
-FROM centos
+FROM tomcat:8.5-jdk11
 
-MAINTAINER bobby
+MAINTAINER Unidata
 
-RUN mkdir /opt/tomcat/
+# Install necessary packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends  \
+        gosu \
+        zip \
+        unzip \
+        && \
+    # Cleanup
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Eliminate default web applications
+    rm -rf ${CATALINA_HOME}/webapps/* && \
+    rm -rf ${CATALINA_HOME}/webapps.dist && \
+    # Obscuring server info
+    cd ${CATALINA_HOME}/lib && \
+    mkdir -p org/apache/catalina/util/ && \
+    unzip -j catalina.jar org/apache/catalina/util/ServerInfo.properties \
+        -d org/apache/catalina/util/ && \
+    sed -i 's/server.info=.*/server.info=Apache Tomcat/g' \
+        org/apache/catalina/util/ServerInfo.properties && \
+    zip -ur catalina.jar \
+        org/apache/catalina/util/ServerInfo.properties && \
+    rm -rf org && cd ${CATALINA_HOME} && \
+    # Setting restrictive umask container-wide
+    echo "session optional pam_umask.so" >> /etc/pam.d/common-session && \
+    sed -i 's/UMASK.*022/UMASK           007/g' /etc/login.defs
 
-WORKDIR /opt/tomcat
-RUN curl -O https://www-eu.apache.org/dist/tomcat/tomcat-8/v8.5.40/bin/apache-tomcat-8.5.40.tar.gz
-RUN tar xvfz apache*.tar.gz
-RUN mv apache-tomcat-8.5.40/* /opt/tomcat/.
-RUN yum -y install java
-RUN java -version
+# Security enhanced web.xml
+COPY web.xml ${CATALINA_HOME}/conf/
 
-WORKDIR /opt/tomcat/webapps
-RUN curl -O -L https://github.com/AKSarav/SampleWebApp/raw/master/dist/SampleWebApp.war
+# Security enhanced server.xml
+COPY server.xml ${CATALINA_HOME}/conf/
 
-EXPOSE 8080
+# Tomcat start script
+COPY start-tomcat.sh ${CATALINA_HOME}/bin
+COPY entrypoint.sh /
 
-CMD ["/opt/tomcat/bin/catalina.sh", "run"]
+# Start container
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["start-tomcat.sh"]
