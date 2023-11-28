@@ -40,13 +40,12 @@ pipeline{
             script {
                 withCredentials([string(credentialsId: 'k8s_token', variable: 'k8s_token')]) {
 }
-            }
                  sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token} apply -f deployment.yml'
 
                     sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token}" apply -f service.yml'
                     
                     sh 'kubectl --server=https://D19DD6CD7030D3B28FDEFCE4F3B1B36A.gr7.us-east-1.eks.amazonaws.com --insecure-skip-tls-verify --token= "${k8s_token}" rollout restart deployment/java-app-deployment'
-                    
+            }      
                     echo "kubernetes deployment is done"
 
                     sh 'kubectl get deployments'
